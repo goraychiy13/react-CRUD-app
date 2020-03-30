@@ -1,0 +1,32 @@
+.site-layout-background .trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.site-layout-background .trigger:hover {
+  color: #1890ff;
+}
+
+.main-layout .logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+.main-layout .site-layout-background {
+  background: #fff;
+}
+
+.page-layout-background {
+  margin: 24px 16px;
+  padding: 24px;
+  min-height: calc(100vh - 110px);
+  background: #fff;
+}
+
+h1 {
+  font-size: 26px;
+}

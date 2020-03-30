@@ -1,0 +1,18 @@
+.ant-form-item .ant-col-4 {
+    max-width: 30%;
+    width: 30%;
+    flex: auto;
+}
+.ant-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+.ant-modal-footer .ant-form-item {
+    margin: 0!important;
+}
+.ant-modal-body {
+    padding-bottom: 5px;
+}
+.ant-modal-footer .add-btn {
+    margin-left: 10px;
+}
