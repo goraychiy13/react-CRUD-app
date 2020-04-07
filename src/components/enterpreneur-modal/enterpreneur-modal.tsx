@@ -1,17 +1,18 @@
-import { Button, Cascader, Form, Input, Select } from 'antd';
+import { Button, Form, Input, message, Select } from 'antd';
+import { FormInstance } from 'antd/lib/form';
 import Modal from 'antd/lib/modal/Modal';
 import axios from 'axios';
 import * as React from 'react';
 import { Component } from 'react';
 import { Client, ClientType } from '../../models/client.model';
-import './enterpreneur-modal.css';
-import { FormInstance } from 'antd/lib/form';
 import { Founder } from '../../models/founder.model';
+import './enterpreneur-modal.css';
 
 type ClientModalProps = {
     visible: boolean;
     handleOk: () => void;
     handleCancel: () => void;
+    changeLoading: () => void;
     clientId: Client | null | undefined;
 }
 
@@ -44,12 +45,12 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
             const founders: Founder | undefined[] = [];
             client.founders.forEach((founderId) => {
                 const founder: Founder | undefined = this.state.founders.find((founder: Founder) => founder.id === founderId);
-                founders.push(founder);
+                founder ? founders.push(founder): null;
             });
             client.founders = founders;
         } else if (client.founders) {
             const founder: Founder | undefined = this.state.founders.find((founder: Founder) => founder.id === client.founders);
-            client.founders = [founder];
+            founder ? client.founders = [founder] : null;
         }
         if (this.client) {
             client.id = this.client.id;
@@ -58,26 +59,45 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
             axios.put('/api/Client/' + this.client.id, client).then((res) => {
                 this.setState({ loading: false });
                 this.props.handleOk();
-            });
+            })
+                .catch((error) => {
+                    message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                    this.setState({
+                        loading: false
+                    });
+                });
         } else {
             client.type = ClientType[client.type];
             this.setState({ loading: true });
             axios.post('/api/Client', client).then((res) => {
                 this.setState({ loading: false });
                 this.props.handleOk();
-            });
+            })
+                .catch((error) => {
+                    message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                    this.setState({
+                        loading: false
+                    });
+                });
         }
-    };
+    }
+
     componentDidMount() {
         if (this.props.clientId) {
-            axios.get('/api/Client/'+this.props.clientId).then((res: { data: Client }) => {
+            this.props.changeLoading();
+            axios.get('/api/Client/' + this.props.clientId).then((res: { data: Client }) => {
+                this.props.changeLoading();
                 const founders: number[] = res.data.founders.map((founder: Founder) => {
                     return founder.id;
                 });
                 res.data.founders = res.data.type === ClientType.UL ? founders : founders[0];
-                
+
                 this.client = res.data;
                 this.setState({ currentType: this.client.type });
+            })
+            .catch((error) => {
+                message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                this.props.changeLoading();
             });
         }
         axios.get('/api/Founder').then((res: { data: Founder[] }) => {
@@ -89,9 +109,16 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                 }
             });
             this.setState({ founderOpitons: founderOpitons });
+        })
+        .catch((error) => {
+            message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+            this.setState({
+                loading: false
+            });
         });
 
     }
+
     render() {
         if (this.state.founderOpitons.length > 0 && (this.props.clientId && this.client) || !this.props.clientId) {
             return (
@@ -120,8 +147,16 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                                     message: 'Введите ИНН',
                                 },
                                 {
-                                    len: 12,
-                                    message: 'Неправильный ИНН'
+                                    validator(rule, value: string, callback) {
+                                        try {
+                                            if (value.length < 10 || value.length === 11 || value.length > 12) {
+                                                throw new Error('Неправильный ИНН');
+                                            }
+                                            callback();
+                                        } catch (err) {
+                                            callback(err);
+                                        }
+                                    }
                                 }
                             ]}
                         >
@@ -135,6 +170,10 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                                     required: true,
                                     message: 'Введите наименование',
                                 },
+                                {
+                                    max: 300,
+                                    message: 'Наименование должно быть не больше 300 символов',
+                                }
                             ]}
                         >
                             <Input />
@@ -146,7 +185,7 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                                 {
                                     required: true,
                                     message: 'Необходимо выбрать тип',
-                                },
+                                }
                             ]}
                         >
                             <Select
@@ -168,14 +207,16 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                             label="Учредители"
                             name="founders"
                         >
-                            { this.state.currentType === 'UL' ? <Select
+                            {this.state.currentType === 'UL' ? <Select
                                 placeholder="Выберите учредителя"
                                 mode="multiple"
                                 options={this.state.founderOpitons}
+                                // disabled
                             /> : <Select
-                                placeholder="Выберите учредителя"
-                                options={this.state.founderOpitons}
-                            />}
+                                    placeholder="Выберите учредителя"
+                                    options={this.state.founderOpitons}
+                                    // disabled
+                                />}
                         </Form.Item>
                         <div className="ant-modal-footer">
                             <Button

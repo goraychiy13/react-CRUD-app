@@ -22,4 +22,5 @@ export type ClientState = {
     clients: Client[];
     visible: boolean;
     currentClientId: number | null | undefined;
+    loading: boolean;
 }

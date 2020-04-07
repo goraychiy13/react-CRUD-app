@@ -16,4 +16,5 @@ export type FounderState = {
     clients: Client[];
     visible: boolean;
     currentFounderId: number | null | undefined;
+    loading: boolean;
 }

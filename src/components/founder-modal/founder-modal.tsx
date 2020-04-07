@@ -1,4 +1,4 @@
-import { Button, Cascader, Form, Input, Select } from 'antd';
+import { Button, Cascader, Form, Input, Select, message } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import Modal from 'antd/lib/modal/Modal';
 import axios from 'axios';
@@ -13,6 +13,7 @@ type FounderModalProps = {
     handleOk: () => void;
     handleCancel: () => void;
     founderId: number | null | undefined;
+    changeLoading: () => void;
 }
 
 type FounderModalState = {
@@ -43,22 +44,41 @@ export class FounderModal extends Component<FounderModalProps, FounderModalState
         if (this.founder) {
             founder.id = this.founder.id;
             this.setState({ loading: true });
-            axios.put('/api/Founder/' + this.founder.id, founder).then((res) => {
-                this.setState({ loading: false });
-                this.props.handleOk();
-            });
+            axios.put('/api/Founder/' + this.founder.id, founder)
+                .then((res) => {
+                    this.setState({ loading: false });
+                    this.props.handleOk();
+                })
+                .catch((error) => {
+                    message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                    this.setState({
+                        loading: false
+                    });
+                });
         } else {
             this.setState({ loading: true });
             axios.post('/api/Founder', founder).then((res) => {
                 this.setState({ loading: false });
                 this.props.handleOk();
+            })
+            .catch((error) => {
+                message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                this.setState({
+                    loading: false
+                });
             });
         }
     };
     componentDidMount() {
         if (this.props.founderId) {
+            this.props.changeLoading();
             axios.get('/api/Founder/' + this.props.founderId).then((res: { data: Founder }) => {
                 this.founder = res.data;
+                this.props.changeLoading();
+            })
+            .catch((error) => {
+                message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+                this.props.changeLoading();
             });
         }
         axios.get('/api/Client').then((res: { data: Client[] }) => {
@@ -70,6 +90,12 @@ export class FounderModal extends Component<FounderModalProps, FounderModalState
                 }
             });
             this.setState({ clientOpitons: clientOpitons });
+        })
+        .catch((error) => {
+            message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
+            this.setState({
+                loading: false
+            });
         });
 
     }
@@ -116,6 +142,10 @@ export class FounderModal extends Component<FounderModalProps, FounderModalState
                                     required: true,
                                     message: 'Введите наименование',
                                 },
+                                {
+                                    max: 300,
+                                    message: 'Наименование должно быть не больше 300 символов',
+                                }
                             ]}
                         >
                             <Input />

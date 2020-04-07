@@ -3,3 +3,7 @@
     justify-content: flex-end;
     padding-bottom: 20px;
 }
+.table-wrap {
+    width: 100%;
+    overflow: auto;
+}
