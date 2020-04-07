@@ -14,6 +14,7 @@
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+  background-image: url('Teledoc.png');
 }
 
 .main-layout .site-layout-background {
@@ -29,4 +30,16 @@
 
 h1 {
   font-size: 26px;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-selected:nth-child(1) {
+  background-color: rgb(24, 144, 255)
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-selected:nth-child(2) {
+  background-color: rgb(255, 38, 75)
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-active {
+  background-color: rgb(17, 71, 124)
 }

@@ -28,7 +28,7 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-export class EnterpreneurModal extends Component<ClientModalProps, ClientModalState> {
+export class EnterpreneurModalLookFounders extends Component<ClientModalProps, ClientModalState> {
     state = {
         loading: false,
         founders: [],
@@ -124,7 +124,7 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
             return (
                 <Modal
                     visible={this.props.visible}
-                    title={this.client ? 'Редактировать клиента' : 'Добавить клиента'}
+                    title={this.client ? 'Редактировать клиента' : 'Посмотреть учредитиелей'}
                     onOk={this.props.handleOk}
                     onCancel={this.props.handleCancel}
                     footer={null}
@@ -138,71 +138,6 @@ export class EnterpreneurModal extends Component<ClientModalProps, ClientModalSt
                         ref={this.formRef}
                         {...layout}
                     >
-                        <Form.Item
-                            label="ИНН"
-                            name="tin"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Введите ИНН',
-                                },
-                                {
-                                    validator(rule, value: string, callback) {
-                                        try {
-                                            if (value.length < 10 || value.length === 11 || value.length > 12) {
-                                                throw new Error('Неправильный ИНН');
-                                            }
-                                            callback();
-                                        } catch (err) {
-                                            callback(err);
-                                        }
-                                    }
-                                }
-                            ]}
-                        >
-                            <Input type="number" />
-                        </Form.Item>
-                        <Form.Item
-                            label="Наименованиие"
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Введите наименование',
-                                },
-                                {
-                                    max: 300,
-                                    message: 'Наименование должно быть не больше 300 символов',
-                                }
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            label="Тип"
-                            name="type"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Необходимо выбрать тип',
-                                }
-                            ]}
-                        >
-                            <Select
-                                placeholder="Выберите тип"
-                                onChange={this.onTypeChange}
-                                options={[
-                                    {
-                                        value: ClientType.IP,
-                                        label: 'Индивидуальный предприниматель',
-                                    },
-                                    {
-                                        value: ClientType.UL,
-                                        label: 'Юридическое лицо',
-                                    }
-                                ]}
-                            ></Select>
-                        </Form.Item>
                         <Form.Item
                             label="Учредители"
                             name="founders"

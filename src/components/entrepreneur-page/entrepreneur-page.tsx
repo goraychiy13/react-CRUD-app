@@ -10,6 +10,7 @@ import { compareByAlph } from '../../utils/utils';
 import { EnterpreneurModal } from '../enterpreneur-modal/enterpreneur-modal';
 import { Loader } from '../loader/loader';
 import './enterpreneur-page.css';
+import { EnterpreneurModalLookFounders } from '../enterpreneur-modal/enterpreneur-modal-look-founders';
 
 const { Content } = Layout;
 
@@ -78,7 +79,8 @@ class EnterpreneurPage extends Component<{}, ClientState> {
                     <a onClick={() => this.handleEdit(record.id)}>Изменить</a>&nbsp;
                     <Popconfirm title="Вы действительно хотите удалить эту запись?" onConfirm={() => this.handleDelete(record.id)}>
                         <a>Удалить</a>
-                    </Popconfirm>
+                    </Popconfirm>&nbsp;
+                    {/* <a onClick={() => this.showModal()}>Посмотреть учредителей</a> */}
                 </div>
             )
         },
@@ -92,7 +94,7 @@ class EnterpreneurPage extends Component<{}, ClientState> {
                 message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
             });
     };
-    
+
     handleEdit = (id: number) => {
         const currentClient = JSON.parse(JSON.stringify(this.state.clients.find((client: Client) => client.id === id) as Client | undefined));
         if (currentClient) {
@@ -181,6 +183,13 @@ class EnterpreneurPage extends Component<{}, ClientState> {
                     clientId={this.state.currentClientId}
                     changeLoading={this.changeLoading}
                 /> : null}
+                {/* {this.state.visible ? <EnterpreneurModalLookFounders
+                    visible={this.state.visible}
+                    handleCancel={this.handleCancel}
+                    handleOk={this.handleOk}
+                    clientId={this.state.currentClientId}
+                    changeLoading={this.changeLoading}
+                /> : null} */}
                 <Loader loading={this.state.loading} />
             </Content>
         )
