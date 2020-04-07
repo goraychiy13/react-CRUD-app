@@ -21,6 +21,7 @@ export interface Client {
 export type ClientState = {
     clients: Client[];
     visible: boolean;
+    visibleLook: boolean;
     currentClientId: number | null | undefined;
     loading: boolean;
 }

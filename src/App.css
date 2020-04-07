@@ -32,12 +32,16 @@ h1 {
   font-size: 26px;
 }
 
+.ant-menu.ant-menu-dark .ant-menu-item {
+  transition: all ease-in 0.4s;
+} 
+
 .ant-menu.ant-menu-dark .ant-menu-item-selected:nth-child(1) {
-  background-color: rgb(24, 144, 255)
+  background-color: rgb(24, 144, 255);
 }
 
 .ant-menu.ant-menu-dark .ant-menu-item-selected:nth-child(2) {
-  background-color: rgb(255, 38, 75)
+  background-color: rgb(255, 38, 75);
 }
 
 .ant-menu.ant-menu-dark .ant-menu-item-active {

@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined,EyeOutlined } from '@ant-design/icons';
 import { Button, Layout, message, Popconfirm, Table } from 'antd';
 import axios from 'axios';
 import Moment from 'moment';
@@ -19,7 +19,8 @@ class EnterpreneurPage extends Component<{}, ClientState> {
         clients: [],
         visible: false,
         currentClientId: null,
-        loading: false
+        loading: false,
+        visibleLook: false
     };
 
     getTableClients = () => {
@@ -76,11 +77,12 @@ class EnterpreneurPage extends Component<{}, ClientState> {
             dataIndex: 'action',
             render: (text, record) => (
                 <div>
-                    <a onClick={() => this.handleEdit(record.id)}>Изменить</a>&nbsp;
+                    <a onClick={() => this.handleEdit(record.id)}>Изменить</a>&nbsp;/&nbsp;
                     <Popconfirm title="Вы действительно хотите удалить эту запись?" onConfirm={() => this.handleDelete(record.id)}>
                         <a>Удалить</a>
-                    </Popconfirm>&nbsp;
-                    {/* <a onClick={() => this.showModal()}>Посмотреть учредителей</a> */}
+                    </Popconfirm>&nbsp;/
+                    <br/>
+                    <a onClick={() => this.showModalLookFounders(record.id)}><EyeOutlined /> Учредителей</a>
                 </div>
             )
         },
@@ -110,14 +112,38 @@ class EnterpreneurPage extends Component<{}, ClientState> {
         });
     };
 
+    showModalLookFounders = (id: number) => {
+        const currentClient = JSON.parse(JSON.stringify(this.state.clients.find((client: Client) => client.id === id) as Client | undefined));
+        if (currentClient) {
+            currentClient.type = currentClient.type === ClientType.IPFormated ? [ClientType.IP] : [ClientType.UL];
+        }
+        this.setState({
+            currentClientId: currentClient.id,
+            visibleLook: true,
+            visible: false
+        });
+    }
+
     handleOk = () => {
         this.getClients();
         this.setState({ visible: false });
+        this.handleCancel();
     };
 
     handleCancel = () => {
         this.setState({ currentClientId: null });
         this.setState({ visible: false });
+    };
+
+    handleOkLook = () => {
+        this.getClients();
+        this.setState({ visibleLook:false });
+        this.handleCancel();
+    }
+
+    handleCancelLook = () => {
+        this.setState({ currentClientId: null });
+        this.setState({ visibleLook: false });
     };
 
     componentDidMount() {
@@ -183,13 +209,13 @@ class EnterpreneurPage extends Component<{}, ClientState> {
                     clientId={this.state.currentClientId}
                     changeLoading={this.changeLoading}
                 /> : null}
-                {/* {this.state.visible ? <EnterpreneurModalLookFounders
-                    visible={this.state.visible}
-                    handleCancel={this.handleCancel}
-                    handleOk={this.handleOk}
+                {this.state.visibleLook ? <EnterpreneurModalLookFounders
+                    visibleLook={this.state.visibleLook}
+                    handleCancelLook={this.handleCancelLook}
+                    handleOkLook={this.handleOkLook}
                     clientId={this.state.currentClientId}
                     changeLoading={this.changeLoading}
-                /> : null} */}
+                /> : null}
                 <Loader loading={this.state.loading} />
             </Content>
         )

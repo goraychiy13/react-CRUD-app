@@ -9,9 +9,10 @@ import { Founder } from '../../models/founder.model';
 import './enterpreneur-modal.css';
 
 type ClientModalProps = {
-    visible: boolean;
-    handleOk: () => void;
-    handleCancel: () => void;
+    // visible: boolean;
+    visibleLook: boolean;
+    handleOkLook: () => void;
+    handleCancelLook: () => void;
     changeLoading: () => void;
     clientId: Client | null | undefined;
 }
@@ -56,30 +57,8 @@ export class EnterpreneurModalLookFounders extends Component<ClientModalProps, C
             client.id = this.client.id;
             client.type = ClientType[client.type];
             this.setState({ loading: true });
-            axios.put('/api/Client/' + this.client.id, client).then((res) => {
-                this.setState({ loading: false });
-                this.props.handleOk();
-            })
-                .catch((error) => {
-                    message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
-                    this.setState({
-                        loading: false
-                    });
-                });
-        } else {
-            client.type = ClientType[client.type];
-            this.setState({ loading: true });
-            axios.post('/api/Client', client).then((res) => {
-                this.setState({ loading: false });
-                this.props.handleOk();
-            })
-                .catch((error) => {
-                    message.error('Ошибка сервера. Обратитесь к администратору в случае повторения.');
-                    this.setState({
-                        loading: false
-                    });
-                });
-        }
+            this.props.handleOkLook();
+        } 
     }
 
     componentDidMount() {
@@ -123,10 +102,10 @@ export class EnterpreneurModalLookFounders extends Component<ClientModalProps, C
         if (this.state.founderOpitons.length > 0 && (this.props.clientId && this.client) || !this.props.clientId) {
             return (
                 <Modal
-                    visible={this.props.visible}
-                    title={this.client ? 'Редактировать клиента' : 'Посмотреть учредитиелей'}
-                    onOk={this.props.handleOk}
-                    onCancel={this.props.handleCancel}
+                    visible={this.props.visibleLook}
+                    title={this.client ? 'Посмотреть учредитиелей': ''}
+                    onOk={this.props.handleOkLook}
+                    onCancel={this.props.handleCancelLook}
                     footer={null}
                 >
                     <Form
@@ -143,12 +122,12 @@ export class EnterpreneurModalLookFounders extends Component<ClientModalProps, C
                             name="founders"
                         >
                             {this.state.currentType === 'UL' ? <Select
-                                placeholder="Выберите учредителя"
+                                placeholder="Выберите учредителя в разделе 'Учредители'"
                                 mode="multiple"
                                 options={this.state.founderOpitons}
                                 disabled
                             /> : <Select
-                                    placeholder="Выберите учредителя"
+                                    placeholder="Выберите учредителя в разделе 'Учредители'"
                                     options={this.state.founderOpitons}
                                     disabled
                                 />}
@@ -156,7 +135,7 @@ export class EnterpreneurModalLookFounders extends Component<ClientModalProps, C
                         <div className="ant-modal-footer">
                             <Button
                                 key="back"
-                                onClick={this.props.handleCancel}
+                                onClick={this.props.handleCancelLook}
                             >Отмена</Button>
                             <Form.Item>
                                 <Button
